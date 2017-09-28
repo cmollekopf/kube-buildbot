@@ -1,0 +1,4 @@
+venv
+master/gitpoller-workdir
+*.log
+*.sample
