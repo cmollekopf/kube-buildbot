@@ -23,22 +23,7 @@ benchmarkdashboard.config['TEMPLATES_AUTO_RELOAD'] = True
 
 @benchmarkdashboard.route("/index.html")
 def main():
-    # This code fetches build data from the data api, and give it to the
-    # template
-    builders = benchmarkdashboard.buildbot_api.dataGet("/builders")
-    builds = benchmarkdashboard.buildbot_api.dataGet("/builds", limit=20)
-
-    # properties are actually not used in the template example, but this is
-    # how you get more properties
-    for build in builds:
-        build['properties'] = benchmarkdashboard.buildbot_api.dataGet(
-            ("builds", build['buildid'], "properties"))
-
-        build['results_text'] = statusToString(build['results'])
-
-    # Example on how to use requests to get some info from other web servers
-    # result = subprocess.run("{}/testenv.py srcbuild --noninteractive kube Sink hawd json mail_query".format(config.dockerdir), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    # output = result.stdout
+    charts = []
     output = subprocess.check_output("{}/testenv.py srcbuild --noninteractive kube Sink hawd json mail_query".format(config.dockerdir), shell=True, stderr=subprocess.STDOUT)
     log.msg("Output: ", output)
     if output:
@@ -52,5 +37,12 @@ def main():
             dataset = row['rows']
             timestamp = row['timestamp']
             graph_data.append(dict(x=i, y=value))
-        return render_template('mydashboard.html', builders=builders, builds=builds, graph_data=graph_data)
+
+        charts.append({"name": "mail_query",
+                       "foo": "bar",
+                       "data": graph_data})
+
+    if charts:
+        return render_template('mydashboard.html', charts=charts)
+
     return render_template_string("No results available")
