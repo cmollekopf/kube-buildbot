@@ -1,1 +1,2 @@
-dockerdir="/home/mollekopf/docker/"
+import os
+dockerdir = os.path.expanduser('~') + "/docker/"
