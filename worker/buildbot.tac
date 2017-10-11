@@ -3,7 +3,7 @@ import os
 from buildbot_worker.bot import Worker
 from twisted.application import service
 
-basedir = '/home/mollekopf/buildbot/worker'
+basedir = '.'
 rotateLength = 10000000
 maxRotatedFiles = 10
 
