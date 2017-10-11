@@ -46,7 +46,7 @@ def main():
         datasetName = hawdResult['dataset']
         description = hawdResult['description']
         graph_data = []
-        for i, row in enumerate(hawdResult['rows']):
+        for i, row in enumerate(sorted(hawdResult['rows'], key=lambda row: row['timestamp'])):
             commit = row['commit']
             value = row['queryResultPerMs']
             dataset = row['rows']
