@@ -31,9 +31,9 @@ buildmaster_host = 'localhost'
 port = 9989
 workername = 'example-worker'
 passwd = 'pass'
-keepalive = 600
+keepalive = 120
 umask = None
-maxdelay = 300
+maxdelay = 10
 numcpus = None
 allow_shutdown = None
 
