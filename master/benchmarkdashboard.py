@@ -25,6 +25,8 @@ benchmarkdashboard.config['TEMPLATES_AUTO_RELOAD'] = True
 def main():
     benchmarksToRun = [{"name": "mail_query",
                         "render": ["simple", "threadleader"]},
+                       {"name": "mail_query_incremental",
+                        "render": ["nonincremental", "incremental"]}
                       ]
     charts = []
 
