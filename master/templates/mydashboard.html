@@ -10,6 +10,14 @@
     <canvas id="{{chart.name}}" width="400" height="200"></canvas>
     {% endfor %}
     <script>
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++ ) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
         // We use Chart.js for rendering a chart, we first have to download it from internet
         // (will be cached by the browser)
         $.getScript("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js",
@@ -19,12 +27,21 @@
                 new Chart("{{chart.name}}", {
                     type: 'line',
                     data: {
-                        datasets: [{
-                            label: '{{chart.name}}',
-                            data: {{chart.data | tojson | safe}}
-                        }]
+                        datasets: [
+                        {% for dataset in chart.datasets %}
+                        {
+                            label: '{{dataset.name}}[{{dataset.unit}}]',
+                            borderColor: getRandomColor(),
+                            data: {{dataset.data | tojson | safe}}
+                        },
+                        {% endfor %}
+                        ]
                     },
                     options: {
+                        title:{
+                            display: true,
+                            text: '{{chart.description}}'
+                        },
                         scales: {
                             xAxes: [{
                                 type: 'linear',

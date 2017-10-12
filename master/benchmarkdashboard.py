@@ -23,23 +23,41 @@ benchmarkdashboard.config['TEMPLATES_AUTO_RELOAD'] = True
 
 @benchmarkdashboard.route("/index.html")
 def main():
-    benchmarksToRun = ["mail_query", "mail_query_threadleader"]
+    benchmarksToRun = [{"name": "mail_query",
+                        "render": ["simple", "threadleader"]},
+                      ]
     charts = []
 
     for benchmark in benchmarksToRun:
-        output = subprocess.check_output("{}/testenv.py srcbuild --noninteractive kube Sink hawd json {}".format(config.dockerdir, benchmark), shell=True, stderr=subprocess.STDOUT)
+        output = subprocess.check_output("{}/testenv.py srcbuild --noninteractive kube Sink hawd json {}".format(config.dockerdir, benchmark["name"]), shell=True, stderr=subprocess.STDOUT)
         # log.msg("Output: ", output)
         if output:
             hawdResult = json.loads(output)
-            graph_data = []
+            graph_data = {}
+            for name in benchmark['render']:
+                graph_data[name] = []
+            units = {}
+            names = {}
             for i, row in enumerate(sorted(hawdResult['rows'], key=lambda row: row['timestamp'])):
                 # commit = row['commit']
-                graph_data.append(dict(x=i, y=row['queryResultPerMs']))
+                for c in row['columns']:
+                    name = c['name']
+                    if name in benchmark["render"]:
+                        #We aggregate by column name
+                        graph_data[name].append(dict(x=i, y=c['value']))
+                        units[name] = c['unit']
+                        names[name] = c['name']
+
+            datasets=[]
+            for name, data in graph_data.items():
+                datasets.append({"name": names[name],
+                    "data": data,
+                    "unit": units[name]
+                    })
 
             charts.append({"name": hawdResult['dataset'],
                         "description": hawdResult['description'],
-                        "foo": "bar",
-                        "data": graph_data})
+                        "datasets": datasets})
 
     if charts:
         return render_template('mydashboard.html', charts=charts)
