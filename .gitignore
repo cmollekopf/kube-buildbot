@@ -2,3 +2,6 @@ venv
 master/gitpoller-workdir
 *.log
 *.sample
+*.pyc
+*.sqlite
+*.pid
