@@ -38,17 +38,28 @@ def main():
         if output:
             hawdResult = json.loads(output)
             graph_data = {}
-            for name in benchmark['render']:
-                graph_data[name] = []
             units = {}
             names = {}
             for i, row in enumerate(sorted(hawdResult['rows'], key=lambda row: row['timestamp'])):
+                skip = False
                 # commit = row['commit']
+                if 'filter' in benchmark:
+                    f = benchmark['filter']
+                    for c in row['columns']:
+                        if c['name'] == f[0] and c['value'] != f[1]:
+                            skip = True
+                            break
+                if skip:
+                    continue
+
                 for c in row['columns']:
                     name = c['name']
                     if name in benchmark["render"]:
                         #We aggregate by column name
-                        graph_data[name].append(dict(x=i, y=c['value']))
+                        if name in graph_data:
+                            graph_data[name].append(dict(x=i, y=c['value']))
+                        else:
+                            graph_data[name]= [dict(x=i, y=c['value'])]
                         units[name] = c['unit']
                         names[name] = c['name']
 
