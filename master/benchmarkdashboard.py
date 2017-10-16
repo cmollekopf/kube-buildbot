@@ -24,9 +24,11 @@ benchmarkdashboard.config['TEMPLATES_AUTO_RELOAD'] = True
 @benchmarkdashboard.route("/index.html")
 def main():
     benchmarksToRun = [{"name": "mail_query",
-                        "render": ["simple", "threadleader"]},
+                        "render": ["simple", "threadleader"],
+                        "absoluteAxis": False},
                        {"name": "mail_query_incremental",
-                        "render": ["nonincremental", "incremental"]}
+                        "render": ["nonincremental", "incremental"],
+                        "absoluteAxis": True}
                       ]
     charts = []
 
@@ -59,7 +61,8 @@ def main():
 
             charts.append({"name": hawdResult['dataset'],
                         "description": hawdResult['description'],
-                        "datasets": datasets})
+                        "datasets": datasets,
+                        "absoluteAxis": benchmark["absoluteAxis"]})
 
     if charts:
         return render_template('mydashboard.html', charts=charts)
