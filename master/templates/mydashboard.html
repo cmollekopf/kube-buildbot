@@ -5,9 +5,8 @@
         font-size 24pt;
     }
     </style>
-    <canvas id="foo" width="400" height="200"></canvas>
     {% for chart in charts %}
-    <canvas id="{{chart.name}}" width="400" height="200"></canvas>
+    <canvas id="{{chart.name}}" width="400" height="100"></canvas>
     {% endfor %}
     <script>
         function getRandomColor() {
