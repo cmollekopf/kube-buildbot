@@ -23,45 +23,71 @@ benchmarkdashboard.config['TEMPLATES_AUTO_RELOAD'] = True
 
 @benchmarkdashboard.route("/index.html")
 def main():
-    benchmarksToRun = [{"name": "mail_query",
+    benchmarksToRun = [{"hawd_def": "mail_query",
                         "render": ["simple", "threadleader"],
                         "absoluteAxis": False},
-                       {"name": "mail_query_incremental",
+                       {"hawd_def": "mail_query_incremental",
                         "render": ["nonincremental", "incremental"],
-                        "absoluteAxis": True}
+                        "absoluteAxis": True},
+                       {"hawd_def": "dummy_write_in_process",
+                        "render": [
+                            {"name" :"rss",
+                             "filter": ("rows", 1000)
+                            },
+                            {"name" :"rss",
+                             "filter": ("rows", 2000)
+                            },
+                            {"name" :"rss",
+                             "filter": ("rows", 5000)
+                            },
+                            {"name" :"rss",
+                             "filter": ("rows", 20000)
+                            },
+                        ],
+                        "absoluteAxis": False},
                       ]
     charts = []
 
     for benchmark in benchmarksToRun:
-        output = subprocess.check_output("{}/testenv.py srcbuild --noninteractive kube Sink hawd json {}".format(config.dockerdir, benchmark["name"]), shell=True, stderr=subprocess.STDOUT)
+        output = subprocess.check_output("{}/testenv.py srcbuild --noninteractive kube Sink hawd json {}".format(config.dockerdir, benchmark["hawd_def"]), shell=True, stderr=subprocess.STDOUT)
         # log.msg("Output: ", output)
         if output:
             hawdResult = json.loads(output)
             graph_data = {}
             units = {}
             names = {}
-            for i, row in enumerate(sorted(hawdResult['rows'], key=lambda row: row['timestamp'])):
-                skip = False
-                # commit = row['commit']
-                if 'filter' in benchmark:
-                    f = benchmark['filter']
-                    for c in row['columns']:
-                        if c['name'] == f[0] and c['value'] != f[1]:
-                            skip = True
-                            break
-                if skip:
-                    continue
+            data = sorted(hawdResult['rows'], key=lambda row: row['timestamp'])
+            for renderable in benchmark["render"]:
+                for row in data:
+                    skip = False
+                    if isinstance(renderable, dict):
+                        columnToRender = renderable["name"]
+                        f = renderable["filter"]
+                    else:
+                        columnToRender = renderable
+                        f = {}
 
-                for c in row['columns']:
-                    name = c['name']
-                    if name in benchmark["render"]:
-                        #We aggregate by column name
-                        if name in graph_data:
-                            graph_data[name].append(dict(x=i, y=c['value']))
-                        else:
-                            graph_data[name]= [dict(x=i, y=c['value'])]
-                        units[name] = c['unit']
-                        names[name] = c['name']
+                    if f:
+                        for c in row['columns']:
+                            if c['name'] == f[0] and c['value'] != f[1]:
+                                skip = True
+                                break
+                    if skip:
+                        continue
+
+                    # log.msg("Columns: ", row['columns'])
+                    for c in row['columns']:
+                        name = c['name']
+                        if f:
+                            name = name + " f(%s=%s)" % (f[0], f[1])
+                        if c['name'] == columnToRender:
+                            #We aggregate by column name
+                            if name not in graph_data:
+                                graph_data[name] = []
+                            graph_data[name].append(dict(x=len(graph_data[name]), y=c['value']))
+                            units[name] = c['unit']
+                            names[name] = name
+
 
             datasets=[]
             for name, data in graph_data.items():
