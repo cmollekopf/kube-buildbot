@@ -23,12 +23,15 @@ benchmarkdashboard.config['TEMPLATES_AUTO_RELOAD'] = True
 
 @benchmarkdashboard.route("/index.html")
 def main():
-    benchmarksToRun = [{"hawd_def": "mail_query",
+    benchmarksToRun = [
+                       #mailquerybenchmark
+                       {"hawd_def": "mail_query",
                         "render": ["simple", "threadleader"],
                         "absoluteAxis": False},
                        {"hawd_def": "mail_query_incremental",
                         "render": ["nonincremental", "incremental"],
                         "absoluteAxis": True},
+                       #dummyresourcewritebenchmark
                        {"hawd_def": "dummy_write_memory",
                         "render": [
                             {"name" :"rss",
@@ -73,6 +76,7 @@ def main():
                        {"hawd_def": "dummy_write_summary",
                         "render": ["rssStandardDeviation", "timeStandardDeviation"],
                         "absoluteAxis": True},
+                       #dummyresourcebenchmark
                        {"hawd_def": "dummy_responsiveness",
                         "render": ["responsetime"],
                         "absoluteAxis": True},
@@ -81,6 +85,17 @@ def main():
                         "absoluteAxis": True},
                        {"hawd_def": "dummy_query_by_uid",
                         "render": ["read"],
+                        "absoluteAxis": True},
+                       #storagebenchmark
+                       {"hawd_def": "storage_readwrite",
+                        "render": ["dbWrite", "fileWrite", "dbRead"],
+                        "absoluteAxis": True},
+                       {"hawd_def": "storage_sizes",
+                        "render": ["dbSize", "fileSize"],
+                        "absoluteAxis": True},
+                       #pipelinebenchmark
+                       {"hawd_def": "pipeline",
+                        "render": ["append", "total"],
                         "absoluteAxis": True},
                       ]
     charts = []
