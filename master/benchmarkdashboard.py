@@ -29,22 +29,50 @@ def main():
                        {"hawd_def": "mail_query_incremental",
                         "render": ["nonincremental", "incremental"],
                         "absoluteAxis": True},
-                       {"hawd_def": "dummy_write_in_process",
+                       {"hawd_def": "dummy_write_memory",
                         "render": [
-                            {"name" :"rss",
-                             "filter": ("rows", 1000)
-                            },
-                            {"name" :"rss",
-                             "filter": ("rows", 2000)
-                            },
                             {"name" :"rss",
                              "filter": ("rows", 5000)
                             },
-                            {"name" :"rss",
-                             "filter": ("rows", 20000)
+                            {"name" :"rssWithoutDb",
+                             "filter": ("rows", 5000)
                             },
                         ],
-                        "absoluteAxis": False},
+                        "absoluteAxis": True},
+                       {"hawd_def": "dummy_write_perf",
+                        "render": [
+                            {"name" :"append",
+                             "filter": ("rows", 5000)
+                            },
+                            {"name" :"total",
+                             "filter": ("rows", 5000)
+                            },
+                        ],
+                        "absoluteAxis": True},
+                       {"hawd_def": "dummy_write_disk",
+                        "render": [
+                            {"name" :"onDisk",
+                             "filter": ("rows", 5000)
+                            },
+                            {"name" :"bufferSize",
+                             "filter": ("rows", 5000)
+                            },
+                        ],
+                        "absoluteAxis": True},
+                       {"name": "Write amplification",
+                        "hawd_def": "dummy_write_disk",
+                        "render": [
+                            {"name" :"writeAmplification",
+                             "filter": ("rows", 2000)},
+                            {"name" :"writeAmplification",
+                             "filter": ("rows", 5000)},
+                            {"name" :"writeAmplification",
+                             "filter": ("rows", 20000)},
+                        ],
+                        "absoluteAxis": True},
+                       {"hawd_def": "dummy_write_summary",
+                        "render": ["rssStandardDeviation", "timeStandardDeviation"],
+                        "absoluteAxis": True},
                       ]
     charts = []
 
@@ -96,7 +124,12 @@ def main():
                     "unit": units[name]
                     })
 
-            charts.append({"name": hawdResult['dataset'],
+            graphName = hawdResult['name']
+            if 'name' in benchmark:
+                graphName = benchmark['name']
+
+            charts.append({"id": hawdResult['dataset'] + graphName,
+                        "name": graphName,
                         "description": hawdResult['description'],
                         "datasets": datasets,
                         "absoluteAxis": benchmark["absoluteAxis"]})

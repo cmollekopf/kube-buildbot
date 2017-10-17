@@ -6,7 +6,7 @@
     }
     </style>
     {% for chart in charts %}
-    <canvas id="{{chart.name}}" width="400" height="100"></canvas>
+    <canvas id="{{chart.id}}" width="400" height="100"></canvas>
     {% endfor %}
     <script>
         function getRandomColor() {
@@ -23,7 +23,7 @@
             // See http://www.chartjs.org/docs/ for more details
             function createChart() {
                 {% for chart in charts %}
-                new Chart("{{chart.name}}", {
+                new Chart("{{chart.id}}", {
                     type: 'line',
                     data: {
                         datasets: [
@@ -39,7 +39,7 @@
                     options: {
                         title:{
                             display: true,
-                            text: '{{chart.description}}'
+                            text: '{{chart.name}}: {{chart.description}}'
                         },
                         scales: {
                             xAxes: [{
