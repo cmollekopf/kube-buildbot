@@ -73,6 +73,15 @@ def main():
                        {"hawd_def": "dummy_write_summary",
                         "render": ["rssStandardDeviation", "timeStandardDeviation"],
                         "absoluteAxis": True},
+                       {"hawd_def": "dummy_responsiveness",
+                        "render": ["responsetime"],
+                        "absoluteAxis": True},
+                       {"hawd_def": "dummy_write_to_facade",
+                        "render": ["append", "total"],
+                        "absoluteAxis": True},
+                       {"hawd_def": "dummy_query_by_uid",
+                        "render": ["read"],
+                        "absoluteAxis": True},
                       ]
     charts = []
 
