@@ -1,5 +1,8 @@
 venv
-master/gitpoller-workdir
+master/gitpoller-workdir/
+master/gitpoller-work/
+master/workers
+*.log.*
 *.log
 *.sample
 *.pyc
