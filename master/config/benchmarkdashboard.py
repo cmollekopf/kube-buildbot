@@ -4,7 +4,6 @@ from __future__ import print_function
 import os
 import time
 
-import requests
 from flask import Flask
 from flask import render_template
 from flask import render_template_string

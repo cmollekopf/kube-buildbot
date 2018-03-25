@@ -5,6 +5,8 @@
     virtualenv venv
     source venv/bin/activate
     pip install 'buildbot[bundle]'
+    pip install flask
+    pip install buildbot-wsgi-dashboards
     pip install buildbot-worker
 
 ## Setup

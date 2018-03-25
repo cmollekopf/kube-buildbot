@@ -26,7 +26,7 @@ def get_schedulers(builderNames, codebases):
 
     sched_force = ForceScheduler(
                             name = "force",
-                            codebases = codebases.keys(),
+                            codebases = list(codebases.keys()),
                             builderNames = builderNames)
 
     return [sched_all, sched_force]
