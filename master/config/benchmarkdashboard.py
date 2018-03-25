@@ -101,9 +101,9 @@ def main():
                         "render": ["append", "total"],
                         "absoluteAxis": True},
                        #imapmailsyncbenchmark
-                       {"hawd_def": "imap_mail_sync",
-                        "render": ["sync", "total", "resync", "resynctotal"],
-                        "absoluteAxis": True},
+                       # {"hawd_def": "imap_mail_sync",
+                       #  "render": ["sync", "total", "resync", "resynctotal"],
+                       #  "absoluteAxis": True},
                       ]
     charts = []
 

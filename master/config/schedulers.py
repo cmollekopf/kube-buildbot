@@ -2,6 +2,7 @@
 
 from buildbot.schedulers.basic import SingleBranchScheduler
 from buildbot.schedulers.forcesched import ForceScheduler
+from buildbot.plugins import util
 
 
 def get_schedulers(builderNames, codebases):
@@ -23,9 +24,9 @@ def get_schedulers(builderNames, codebases):
                             treeStableTimer=60,
                             builderNames = builderNames)
 
-    sched_force = schedulers.ForceScheduler(
+    sched_force = ForceScheduler(
                             name = "force",
-                            codebases = kube_codebases.keys(),
+                            codebases = codebases.keys(),
                             builderNames = builderNames)
 
     return [sched_all, sched_force]

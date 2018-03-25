@@ -3,17 +3,12 @@
 # only take place on one slave.
 
 
+import os
 from buildbot.config import BuilderConfig
-# from . import buildsteps
-
+from buildbot.plugins import util
+from buildbot.plugins import steps
 
 def get_builders(codebases, workerpool):
-
-    # builder = BuilderConfig(name=name,
-    #                         slavenames=['slave'],
-    #                         factory=buildsteps.get_buildsteps(codebases))
-
-    # return [builder]
 
     def kubeBuildFactory(buildConfig):
         f = util.BuildFactory()
@@ -43,11 +38,11 @@ def get_builders(codebases, workerpool):
 
 
         #The codebases argument is necessary to avoid inheriting the branch from the poller on the wrong repository.
-        f.addStep(steps.Git(repourl=kube_codebases['kasync']['repository'], codebase='kasync', branch='master', workdir='src/kasync'))
-        f.addStep(steps.Git(repourl=ube_codebases['kdav2']['repository'], codebase='kdav2', branch='master', workdir='src/kdav2'))
-        f.addStep(steps.Git(repourl=ube_codebases['kimap2']['repository'], codebase='kimap2', branch='master', workdir='src/kimap2'))
-        f.addStep(steps.Git(repourl=ube_codebases['sink']['repository'], codebase='sink', branch='develop', workdir='src/sink'))
-        f.addStep(steps.Git(repourl=ube_codebases['kube']['repository'], codebase='kube', branch='develop', workdir='src/kube'))
+        f.addStep(steps.Git(repourl=codebases['kasync']['repository'], codebase='kasync', branch='master', workdir='src/kasync'))
+        f.addStep(steps.Git(repourl=codebases['kdav2']['repository'], codebase='kdav2', branch='master', workdir='src/kdav2'))
+        f.addStep(steps.Git(repourl=codebases['kimap2']['repository'], codebase='kimap2', branch='master', workdir='src/kimap2'))
+        f.addStep(steps.Git(repourl=codebases['sink']['repository'], codebase='sink', branch='develop', workdir='src/sink'))
+        f.addStep(steps.Git(repourl=codebases['kube']['repository'], codebase='kube', branch='develop', workdir='src/kube'))
 
         f.addStep(steps.ShellSequence(name = 'buildDockerImage',
             commands = [
@@ -170,23 +165,26 @@ def get_builders(codebases, workerpool):
 
         return util.BuilderConfig(name="benchmarkkube", workernames=workerpool, factory=f)
 
+    #FIXME
+    flatpakdir = os.path.expanduser('~') + "/flatpak/"
+
     def kolabnowflatpak():
         f = util.BuildFactory()
         f.addStep(
-            steps.ShellCommand(command="{}/rebuildkolabnow.sh".format(config.flatpakdir))
+            steps.ShellCommand(command="{}/rebuildkolabnow.sh".format(flatpakdir))
         )
         f.addStep(
-            steps.ShellCommand(command="{}/uploadkolabnow.sh".format(config.flatpakdir))
+            steps.ShellCommand(command="{}/uploadkolabnow.sh".format(flatpakdir))
         )
         return util.BuilderConfig(name="kolabnowflatpak", workernames=workerpool, factory=f)
 
     def nightlyflatpak():
         f = util.BuildFactory()
         f.addStep(
-            steps.ShellCommand(command="{}/rebuildkolab.sh".format(config.flatpakdir))
+            steps.ShellCommand(command="{}/rebuildkolab.sh".format(flatpakdir))
         )
         f.addStep(
-            steps.ShellCommand(command="{}/uploadkolab.sh".format(config.flatpakdir))
+            steps.ShellCommand(command="{}/uploadkolab.sh".format(flatpakdir))
         )
         return util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=f)
 

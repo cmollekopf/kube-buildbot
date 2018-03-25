@@ -4,6 +4,7 @@
 
 
 from buildbot.changes.gitpoller import GitPoller
+from buildbot.plugins import changes
 
 
 def get_sources(codebases):
