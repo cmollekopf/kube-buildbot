@@ -4,8 +4,9 @@
 
 from buildbot.plugins import worker
 
-def get_workers(workerpool):
+def get_workers(localworkerpool):
     workers = []
-    for workername in workerpool:
+    for workername in localworkerpool:
         workers.append(worker.LocalWorker(workername))
+    workers.append(worker.Worker('osx-worker', 'osxpw'))
     return workers
