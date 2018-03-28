@@ -22,20 +22,6 @@ def get_builders(codebases, workerpool):
         def dockerCmd(cmd, workdir, haltOnFailure=True):
             return util.ShellArg(command = dockerCommand(cmd, workdir), logfile='output', haltOnFailure=haltOnFailure)
 
-        def prepareBuildsteps():
-            prepareSteps = [
-                util.ShellArg(
-                    command = 'mkdir -p $PWD/build;'
-                            + 'mkdir -p $PWD/install;',
-                    logfile='output',
-                    haltOnFailure=True),
-            ]
-            return steps.ShellSequence(name = 'prepare',
-                commands = prepareSteps,
-                haltOnFailure=True,
-                workdir = './'
-                )
-
 
         #The codebases argument is necessary to avoid inheriting the branch from the poller on the wrong repository.
         f.addStep(steps.Git(repourl=codebases['kasync']['repository'], codebase='kasync', branch='master', workdir='src/kasync'))
@@ -54,7 +40,30 @@ def get_builders(codebases, workerpool):
             workdir = 'src/kube/docker',
             haltOnFailure=True
             ))
-        f.addStep(prepareBuildsteps())
+
+        f.addStep(steps.ShellSequence(name = 'cleanup',
+            commands = [
+                util.ShellArg(
+                    command = 'rm -R  $PWD/build;'
+                            + 'rm -R $PWD/install;',
+                    logfile='output',
+                    haltOnFailure=False),
+            ],
+            workdir = './',
+            haltOnFailure=False,
+            doStepIf=lambda(step): step.getProperty('cleanbuild')
+            ))
+        f.addStep(steps.ShellSequence(name = 'prepare',
+            commands = [
+                util.ShellArg(
+                    command = 'mkdir -p $PWD/build;'
+                            + 'mkdir -p $PWD/install;',
+                    logfile='output',
+                    haltOnFailure=True),
+            ],
+            workdir = './',
+            haltOnFailure=True
+            ))
 
         #Setup buildsteps for all repos
         for repo in buildConfig['repos']:
@@ -92,7 +101,7 @@ def get_builders(codebases, workerpool):
         asan_options = "ASAN_OPTIONS=detect_odr_violation=0,symbolize=1,fast_unwind_on_malloc=0,check_initialization_order=1,detect_deadlocks=1"
         lsan_options = "LSAN_OPTIONS=suppressions=/src/sink/suppressions.lsan"
         builds = {
-            'debugbuild': {'cleanbuild': False,
+            'debugbuild': {
                         'repos': [{'name': 'kasync', 'cmake': debug_cmake_options},
                                     {'name': 'kdav2', 'cmake': debug_cmake_options},
                                     {'name': 'kimap2', 'cmake': debug_cmake_options},
@@ -104,7 +113,7 @@ def get_builders(codebases, workerpool):
                             {'command': 'ctest -V', 'workdir': '/build/kube'}
                         ]
             },
-            # 'debugbuild-loadtest': {'cleanbuild': False,
+            # 'debugbuild-loadtest': {
             #                'sourcedir': "~/src",
             #                'builddir': "~/src/debug/build",
             #                'installdir': "~/src/debug/install",
@@ -113,7 +122,7 @@ def get_builders(codebases, workerpool):
             #                    {'command': 'tests/sinkloadtest.py', 'workdir': '/src/sink', 'timeout': 35 * 60}
             #                ]
             # },
-            'releasebuild': {'cleanbuild': False,
+            'releasebuild': {
                             'repos': [{'name': 'kasync', 'cmake': release_cmake_options},
                                     {'name': 'kdav2', 'cmake': release_cmake_options},
                                     {'name': 'kimap2', 'cmake': release_cmake_options},
@@ -121,7 +130,7 @@ def get_builders(codebases, workerpool):
                                     {'name': 'kube', 'cmake': release_cmake_options},
                             ]
             },
-            'asanbuild': {'cleanbuild': False,
+            'asanbuild': {
                         'repos': [{'name': 'flatbuffers', 'cmake': debug_cmake_options},
                                     {'name': 'kasync', 'cmake': debug_cmake_options},
                                     {'name': 'kdav2', 'cmake': debug_cmake_options},

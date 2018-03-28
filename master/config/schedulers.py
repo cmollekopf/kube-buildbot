@@ -16,11 +16,20 @@ def get_schedulers(builderNames, codebases):
     schedulerList.append(schedulers.ForceScheduler(
                             name = "force",
                             codebases = list(codebases.keys()),
-                            builderNames = builderNames))
+                            builderNames = builderNames,
+                            properties=[
+                                util.BooleanParameter(name="cleanbuild",
+                                                    label="Clean build",
+                                                    default=False)
+                            ]
+                            ))
 
     # Build and run tests at 2 o'clock
     nightlyRebuildScheduler = schedulers.Nightly(name='nightly-rebuild',
                                         builderNames=['debugbuild', 'releasebuild', 'asanbuild'],
+                                        properties = {
+                                            'cleanbuild': True
+                                        },
                                         hour=2, minute=0)
     schedulerList.append(nightlyRebuildScheduler)
     # Build a nightly flatpak if the tests pass
