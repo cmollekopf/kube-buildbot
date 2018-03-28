@@ -179,7 +179,7 @@ def get_builders(codebases, workerpool):
     def kolabnowflatpak():
         f = util.BuildFactory()
         f.addStep(
-            steps.ShellCommand(command="{}/rebuildkolabnow.sh".format(flatpakdir))
+            steps.ShellCommand(command="{}/rebuildkolabnow.sh".format(flatpakdir), haltOnFailure=True)
         )
         f.addStep(
             steps.ShellCommand(command="{}/uploadkolabnow.sh".format(flatpakdir))
@@ -189,7 +189,7 @@ def get_builders(codebases, workerpool):
     def nightlyflatpak():
         f = util.BuildFactory()
         f.addStep(
-            steps.ShellCommand(command="{}/rebuildkolab.sh".format(flatpakdir))
+            steps.ShellCommand(command="{}/rebuildkolab.sh".format(flatpakdir), haltOnFailure=True)
         )
         f.addStep(
             steps.ShellCommand(command="{}/uploadkolab.sh".format(flatpakdir))
