@@ -188,6 +188,23 @@ def get_builders(codebases, workerpool):
         )
         return util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=f)
 
+    def osxbuild():
+        f = util.BuildFactory()
+        buildSteps = [
+            util.ShellArg(
+                command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
+        ]
+        f.addStep(steps.ShellSequence(name = 'craft',
+            commands = buildSteps,
+            haltOnFailure=True,
+            workdir = '/Users/kolab/craftRoot'
+            ))
+        f.addStep(steps.FileUpload(workersrc='Applications/KDE/kube.dmg',
+                           masterdest='/home/mollekopf/kube.dmg',
+                           workdir = '/Users/kolab/craftRoot'
+                           ))
+        return util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=f)
+
     builders = []
     #Setup all builders
     for name, buildConfig in buildConfigurations().items():
@@ -196,5 +213,6 @@ def get_builders(codebases, workerpool):
     builders.append(benchmarkkube())
     builders.append(kolabnowflatpak())
     builders.append(nightlyflatpak())
+    builders.append(osxbuild())
     return builders
 

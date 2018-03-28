@@ -8,4 +8,5 @@ def get_workers(localworkerpool):
     workers = []
     for workername in localworkerpool:
         workers.append(worker.LocalWorker(workername))
+    workers.append(worker.Worker('osx-worker', 'osxpw'))
     return workers
