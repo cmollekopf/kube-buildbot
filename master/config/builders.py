@@ -131,8 +131,7 @@ def get_builders(codebases, workerpool):
                             ]
             },
             'asanbuild': {
-                        'repos': [{'name': 'flatbuffers', 'cmake': debug_cmake_options},
-                                    {'name': 'kasync', 'cmake': debug_cmake_options},
+                        'repos': [{'name': 'kasync', 'cmake': debug_cmake_options},
                                     {'name': 'kdav2', 'cmake': debug_cmake_options},
                                     {'name': 'kimap2', 'cmake': debug_cmake_options},
                                     {'name': 'sink', 'cmake': debug_cmake_options + ' -DENABLE_ASAN=TRUE -DENABLE_MEMCHECK=OFF'}
