@@ -4,8 +4,8 @@
 
 from buildbot.plugins import worker
 
-def get_workers(workerpool):
+def get_workers(localworkerpool):
     workers = []
-    for workername in workerpool:
+    for workername in localworkerpool:
         workers.append(worker.LocalWorker(workername))
     return workers
