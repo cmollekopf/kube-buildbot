@@ -1,5 +1,12 @@
 # Setup
 
+# OSX
+    craft install python3
+    pip3 install virtualenv
+    mkdir venv
+    virtualenv venv
+    . venv/bin/activate
+
 ## Install
     mkdir venv
     virtualenv venv
