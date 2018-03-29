@@ -27,6 +27,7 @@ def get_schedulers(builderNames, codebases):
     # Build and run tests at 2 o'clock
     nightlyRebuildScheduler = schedulers.Nightly(name='nightly-rebuild',
                                         builderNames=['debugbuild', 'releasebuild', 'asanbuild'],
+                                        codebases=codebases,
                                         properties = {
                                             'cleanbuild': True
                                         },
@@ -44,6 +45,7 @@ def get_schedulers(builderNames, codebases):
     #Run benchmarks ever night at 3 o'clock (let's hope the system isn't busy at that point)
     schedulerList.append(schedulers.Nightly(name='nightly-benchmark',
                                         builderNames=['benchmarkkube'],
+                                        codebases=codebases,
                                         hour=3, minute=0))
 
     # schedulerList.append(schedulers.Nightly(name='nightly-loadtest',
