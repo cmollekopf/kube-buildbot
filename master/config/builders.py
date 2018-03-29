@@ -96,7 +96,7 @@ def get_builders(codebases, workerpool):
                         test['workdir'],
                         docker_options_x11),
                     timeout=timeout,
-                    doStepIf=lambda(step): step.getProperty('runtests')
+                    doStepIf=lambda(step): step.getProperty('runtests'),
                     workdir='./'))
         return f
 
