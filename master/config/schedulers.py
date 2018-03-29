@@ -9,7 +9,7 @@ def get_schedulers(builderNames, codebases):
     schedulerList.append(schedulers.SingleBranchScheduler(
                             name='all',
                             codebases=codebases,
-                            change_filter=util.ChangeFilter(project='kube', branch=['master', 'develop']),
+                            change_filter=util.ChangeFilter(branch=['master', 'develop']),
                             treeStableTimer=60,
                             builderNames = builderNames))
 
