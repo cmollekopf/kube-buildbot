@@ -11,6 +11,10 @@ def get_schedulers(builderNames, codebases):
                             codebases=codebases,
                             change_filter=util.ChangeFilter(branch=['master', 'develop']),
                             treeStableTimer=60,
+                            properties = {
+                                'cleanbuild': False,
+                                'runtests': True
+                            },
                             builderNames = builderNames))
 
     schedulerList.append(schedulers.ForceScheduler(
@@ -20,7 +24,10 @@ def get_schedulers(builderNames, codebases):
                             properties=[
                                 util.BooleanParameter(name="cleanbuild",
                                                     label="Clean build",
-                                                    default=False)
+                                                    default=False),
+                                util.BooleanParameter(name="runtests",
+                                                    label="Run tests",
+                                                    default=True)
                             ]
                             ))
 
@@ -29,7 +36,8 @@ def get_schedulers(builderNames, codebases):
                                         builderNames=['debugbuild', 'releasebuild', 'asanbuild'],
                                         codebases=codebases,
                                         properties = {
-                                            'cleanbuild': True
+                                            'cleanbuild': True,
+                                            'runtests': True
                                         },
                                         hour=2, minute=0)
     schedulerList.append(nightlyRebuildScheduler)

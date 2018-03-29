@@ -79,6 +79,7 @@ def get_builders(codebases, workerpool):
                 ))
             f.addStep(steps.Compile(name = "compile {}".format(repo['name']),
                 command=dockerCommand("make -j `nproc` && make install", builddir),
+                haltOnFailure=True,
                 workdir='./'
                 ))
 
@@ -90,7 +91,13 @@ def get_builders(codebases, workerpool):
                     timeout = test['timeout']
 
                 docker_options_x11 = '-t --security-opt seccomp:unconfined -v /tmp/.docker.xauth:/tmp/.docker.xauth -v /tmp/.X11-unix:/tmp/.X11-unix --device /dev/dri/card0:/dev/dri/card0 -e DISPLAY=:0 -e XAUTHORITY=/tmp/.docker.xauth'
-                f.addStep(steps.Test(name=name, command=dockerCommand(test['command'], test['workdir'], docker_options_x11), timeout=timeout, workdir='./'))
+                f.addStep(steps.Test(name=name,
+                    command=dockerCommand(test['command'],
+                        test['workdir'],
+                        docker_options_x11),
+                    timeout=timeout,
+                    doStepIf=lambda(step): step.getProperty('runtests')
+                    workdir='./'))
         return f
 
 
