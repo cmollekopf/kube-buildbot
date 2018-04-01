@@ -44,7 +44,10 @@ def get_schedulers(builderNames, codebases):
     # Build a nightly flatpak if the tests pass
     schedulerList.append(schedulers.Dependent(name='nightly-flatpak',
                                                 upstream=nightlyRebuildScheduler,
-                                                builderNames=['nightlyflatpak']))
+                                                properties = {
+                                                    'upload': False
+                                                },
+                                                builderNames=['nightlyflatpak', 'kolabnowflatpak']))
     # Build a nightly osx image if the tests pass
     schedulerList.append(schedulers.Dependent(name='nightly-osx',
                                                 upstream=nightlyRebuildScheduler,

@@ -188,9 +188,9 @@ def get_builders(codebases, workerpool):
         f.addStep(
             steps.ShellCommand(command="{}/rebuildkolabnow.sh".format(flatpakdir), haltOnFailure=True)
         )
-        f.addStep(
-            steps.ShellCommand(command="{}/uploadkolabnow.sh".format(flatpakdir))
-        )
+        f.addStep(steps.ShellCommand(command="{}/uploadkolabnow.sh".format(flatpakdir),
+            doStepIf=lambda(step): step.getProperty('upload')
+        ))
         return util.BuilderConfig(name="kolabnowflatpak", workernames=workerpool, factory=f)
 
     def nightlyflatpak():
@@ -198,9 +198,9 @@ def get_builders(codebases, workerpool):
         f.addStep(
             steps.ShellCommand(command="{}/rebuildkolab.sh".format(flatpakdir), haltOnFailure=True)
         )
-        f.addStep(
-            steps.ShellCommand(command="{}/uploadkolab.sh".format(flatpakdir))
-        )
+        f.addStep(steps.ShellCommand(command="{}/uploadkolab.sh".format(flatpakdir),
+            doStepIf=lambda(step): step.getProperty('upload')
+        ))
         return util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=f)
 
     def osxbuild():
