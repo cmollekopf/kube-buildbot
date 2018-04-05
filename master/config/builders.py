@@ -117,7 +117,7 @@ def get_builders(codebases, workerpool):
                         ],
                         'tests': [
                             {'command': '/home/developer/startimap.sh && ctest -V', 'workdir': '/build/sink'},
-                            {'command': 'ctest -V', 'workdir': '/build/kube'}
+                            {'command': 'xvfb-run -s "-screen 0 640x480x24" ctest -V', 'workdir': '/build/kube'}
                         ]
             },
             # 'debugbuild-loadtest': {
