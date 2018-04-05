@@ -13,7 +13,8 @@ def get_schedulers(builderNames, codebases):
                             treeStableTimer=60,
                             properties = {
                                 'cleanbuild': False,
-                                'runtests': True
+                                'runtests': True,
+                                'upload': False
                             },
                             builderNames = builderNames))
 
@@ -27,7 +28,10 @@ def get_schedulers(builderNames, codebases):
                                                     default=False),
                                 util.BooleanParameter(name="runtests",
                                                     label="Run tests",
-                                                    default=True)
+                                                    default=True),
+                                util.BooleanParameter(name="upload",
+                                                    label="Upload result",
+                                                    default=False),
                             ]
                             ))
 
@@ -57,6 +61,10 @@ def get_schedulers(builderNames, codebases):
     schedulerList.append(schedulers.Nightly(name='nightly-benchmark',
                                         builderNames=['benchmarkkube'],
                                         codebases=codebases,
+                                        properties = {
+                                            'cleanbuild': True,
+                                            'runtests': False
+                                        },
                                         hour=3, minute=0))
 
     # schedulerList.append(schedulers.Nightly(name='nightly-loadtest',
