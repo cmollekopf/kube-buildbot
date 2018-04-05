@@ -182,6 +182,7 @@ def get_builders(codebases, workerpool):
 
     #FIXME
     flatpakdir = os.path.expanduser('~') + "/flatpak/"
+    flatpak_lock = util.MasterLock("flatpak")
 
     def kolabnowflatpak():
         f = util.BuildFactory()
@@ -191,7 +192,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellCommand(command="{}/uploadkolabnow.sh".format(flatpakdir),
             doStepIf=lambda(step): step.getProperty('upload')
         ))
-        return util.BuilderConfig(name="kolabnowflatpak", workernames=workerpool, factory=f)
+        return util.BuilderConfig(name="kolabnowflatpak", workernames=workerpool, factory=f, locks=[flatpak_lock.access('exclusive')])
 
     def nightlyflatpak():
         f = util.BuildFactory()
@@ -201,7 +202,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellCommand(command="{}/uploadkolab.sh".format(flatpakdir),
             doStepIf=lambda(step): step.getProperty('upload')
         ))
-        return util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=f)
+        return util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=f, locks=[flatpak_lock.access('exclusive')])
 
     def osxbuild():
         f = util.BuildFactory()
