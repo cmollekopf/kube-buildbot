@@ -221,6 +221,19 @@ def get_builders(codebases, workerpool):
                            ))
         return util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=f)
 
+    def winbuild():
+        f = util.BuildFactory()
+        buildSteps = [
+            util.ShellArg(
+                command = 'craft/bin/craft.py kasync', logfile='output', haltOnFailure=True),
+        ]
+        f.addStep(steps.ShellSequence(name = 'craft',
+            commands = buildSteps,
+            haltOnFailure=True,
+            workdir = 'C:\Users\User\CraftRoot'
+            ))
+        return util.BuilderConfig(name="winbuild", workernames=["win-worker"], factory=f)
+
     builders = []
     #Setup all builders
     for name, buildConfig in buildConfigurations().items():
@@ -230,5 +243,6 @@ def get_builders(codebases, workerpool):
     builders.append(kolabnowflatpak())
     builders.append(nightlyflatpak())
     builders.append(osxbuild())
+    builders.append(winbuild())
     return builders
 
