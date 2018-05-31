@@ -206,12 +206,11 @@ def get_builders(codebases, workerpool):
 
     def osxbuild():
         f = util.BuildFactory()
-        buildSteps = [
-            util.ShellArg(
-                command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
-        ]
         f.addStep(steps.ShellSequence(name = 'craft',
-            commands = buildSteps,
+            commands = [
+                util.ShellArg(
+                    command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
+            ],
             haltOnFailure=True,
             workdir = '/Users/kolab/craftRoot'
             ))
@@ -219,18 +218,29 @@ def get_builders(codebases, workerpool):
                            masterdest='/home/mollekopf/kube.dmg',
                            workdir = '/Users/kolab/craftRoot'
                            ))
+        f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
+            command = ["scp",  "/home/mollekopf/kube.dmg", "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
+            doStepIf=lambda(step): step.getProperty('upload')
+            ))
         return util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=f)
 
     def winbuild():
         f = util.BuildFactory()
-        buildSteps = [
-            util.ShellArg(
-                command = 'craft/bin/craft.py kasync', logfile='output', haltOnFailure=True),
-        ]
         f.addStep(steps.ShellSequence(name = 'craft',
-            commands = buildSteps,
+            commands = [
+                util.ShellArg(command = [r'craft\bin\craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', 'extragear/sink'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft\bin\craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--package', 'extragear/kube'], logfile='output', haltOnFailure=True),
+            ],
             haltOnFailure=True,
             workdir = 'C:\Users\User\CraftRoot'
+            ))
+        f.addStep(steps.FileUpload(workersrc='tmp/kube-latest-windows-msvc2017_64-clang.exe',
+                           masterdest='/home/mollekopf/kube.exe',
+                           workdir = 'C:\Users\User\CraftRoot'
+                           ))
+        f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
+            command = ["scp",  "/home/mollekopf/kube.exe", "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
+            doStepIf=lambda(step): step.getProperty('upload')
             ))
         return util.BuilderConfig(name="winbuild", workernames=["win-worker"], factory=f)
 
