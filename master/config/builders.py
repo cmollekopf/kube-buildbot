@@ -183,6 +183,7 @@ def get_builders(codebases, workerpool):
     #FIXME
     flatpakdir = os.path.expanduser('~') + "/flatpak/"
     flatpak_lock = util.MasterLock("flatpak")
+    osx_lock = util.MasterLock("osx")
 
     def kolabnowflatpak():
         f = util.BuildFactory()
@@ -206,23 +207,45 @@ def get_builders(codebases, workerpool):
 
     def osxbuild():
         f = util.BuildFactory()
+        craftRoot = '/Users/kolab/CraftRoot'
+        dmgName = 'kube.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
             commands = [
-                util.ShellArg(
-                    command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
+                util.ShellArg(command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
             ],
             haltOnFailure=True,
-            workdir = '/Users/kolab/craftRoot'
+            workdir = craftRoot
             ))
-        f.addStep(steps.FileUpload(workersrc='Applications/KDE/kube.dmg',
-                           masterdest='/home/mollekopf/kube.dmg',
-                           workdir = '/Users/kolab/craftRoot'
+        f.addStep(steps.FileUpload(workersrc="tmp/%s" % dmgName,
+                           masterdest="/home/mollekopf/%s" % dmgName,
+                           workdir = craftRoot
                            ))
         f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
-            command = ["scp",  "/home/mollekopf/kube.dmg", "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
+            command = ["scp",  "/home/mollekopf/%s" % dmgName, "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
-        return util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=f)
+        return util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive')])
+
+    def kolabnowosxbuild():
+        f = util.BuildFactory()
+        craftRoot = '/Users/kolab/CraftRoot'
+        dmgName = 'kube-kolabnow.dmg'
+        f.addStep(steps.ShellSequence(name = 'craft',
+            commands = [
+                util.ShellArg(command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
+            ],
+            haltOnFailure=True,
+            workdir = craftRoot
+            ))
+        f.addStep(steps.FileUpload(workersrc="tmp/%s" % dmgName,
+                           masterdest="/home/mollekopf/%s" % dmgName,
+                           workdir = craftRoot
+                           ))
+        f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
+            command = ["scp",  "/home/mollekopf/%s" % dmgName, "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
+            doStepIf=lambda(step): step.getProperty('upload')
+            ))
+        return util.BuilderConfig(name="kolabnowosxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive'))
 
     def winbuild():
         f = util.BuildFactory()
@@ -253,6 +276,7 @@ def get_builders(codebases, workerpool):
     builders.append(kolabnowflatpak())
     builders.append(nightlyflatpak())
     builders.append(osxbuild())
+    builders.append(kolabnowosxbuild())
     builders.append(winbuild())
     return builders
 

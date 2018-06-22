@@ -55,7 +55,7 @@ def get_schedulers(builderNames, codebases):
     # Build a nightly osx image if the tests pass
     schedulerList.append(schedulers.Dependent(name='nightly-osx',
                                                 upstream=nightlyRebuildScheduler,
-                                                builderNames=['osxbuild']))
+                                                builderNames=['osxbuild', 'kolabnowosxbuild']))
 
     #Run benchmarks ever night at 3 o'clock (let's hope the system isn't busy at that point)
     schedulerList.append(schedulers.Nightly(name='nightly-benchmark',
