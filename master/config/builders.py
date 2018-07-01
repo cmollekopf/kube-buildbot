@@ -175,7 +175,7 @@ def get_builders(codebases, workerpool):
         addSinkBenchmark('tests/dummyresourcebenchmark')
         addSinkBenchmark('tests/storagebenchmark')
         addSinkBenchmark('tests/pipelinebenchmark')
-        addSinkBenchmark('/home/developer/startimap.sh && QTEST_FUNCTION_TIMEOUT=600000 examples/imapresource/tests/imapmailsyncbenchmark')
+        addSinkBenchmark('/home/developer/startimap.sh && QTEST_FUNCTION_TIMEOUT=1800000 examples/imapresource/tests/imapmailsyncbenchmark')
         # addSinkBenchmark('tests/databasepopulationandfacadequerybenchmark')
 
         return util.BuilderConfig(name="benchmarkkube", workernames=workerpool, factory=f)
