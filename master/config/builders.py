@@ -245,7 +245,7 @@ def get_builders(codebases, workerpool):
             command = ["scp",  "/home/mollekopf/%s" % dmgName, "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
-        return util.BuilderConfig(name="kolabnowosxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive'))
+        return util.BuilderConfig(name="kolabnowosxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive')])
 
     def winbuild():
         f = util.BuildFactory()
