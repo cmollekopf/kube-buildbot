@@ -49,12 +49,15 @@ def get_schedulers(builderNames, codebases):
     schedulerList.append(schedulers.Dependent(name='nightly-flatpak',
                                                 upstream=nightlyRebuildScheduler,
                                                 properties = {
-                                                    'upload': False
+                                                    'upload': True
                                                 },
                                                 builderNames=['nightlyflatpak', 'kolabnowflatpak']))
     # Build a nightly osx image if the tests pass
     schedulerList.append(schedulers.Dependent(name='nightly-osx',
                                                 upstream=nightlyRebuildScheduler,
+                                                properties = {
+                                                    'upload': True
+                                                },
                                                 builderNames=['osxbuild', 'kolabnowosxbuild']))
 
     #Run benchmarks ever night at 3 o'clock (let's hope the system isn't busy at that point)
