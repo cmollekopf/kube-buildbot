@@ -73,6 +73,22 @@ def get_schedulers(builderNames, codebases):
     # schedulerList.append(schedulers.Nightly(name='nightly-loadtest',
     #                                     builderNames=['debugbuild-loadtest'],
     #                                     hour=4, minute=0))
+    schedulerList.append(schedulers.ForceScheduler(
+                            name = "uploadNewRelease",
+                            codebases = list(codebases.keys()),
+                            builderNames = ['nightlyflatpak', 'kolabnowflatpak', 'osxbuild', 'kolabnowosxbuild'],
+                            properties=[
+                                util.BooleanParameter(name="cleanbuild",
+                                                    label="Clean build",
+                                                    default=False),
+                                util.BooleanParameter(name="runtests",
+                                                    label="Run tests",
+                                                    default=True),
+                                util.BooleanParameter(name="upload",
+                                                    label="Upload result",
+                                                    default=True),
+                            ]
+                            ))
 
     return schedulerList
 
