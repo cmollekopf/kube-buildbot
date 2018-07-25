@@ -211,10 +211,18 @@ def get_builders(codebases, workerpool):
         dmgName = 'kube.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
             commands = [
-                util.ShellArg(command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', 'extragear/sink'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--package', 'extragear/kube'], logfile='output', haltOnFailure=True),
             ],
             haltOnFailure=True,
-            workdir = craftRoot
+            workdir = craftRoot,
+            env = {
+                "MACOSX_DEPLOYMENT_TARGET": "10.9.0",
+                "SDKROOT": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/",
+                "PATH": ["/usr/local/Cellar/gettext/0.19.8.1/bin", "${PATH}"],
+                "CMAKE_LIBRARY_PATH": "/usr/local/Cellar/gettext/0.19.8.1/lib",
+                "CMAKE_INCLUDE_PATH": "/usr/local/Cellar/gettext/0.19.8.1/include"
+            }
             ))
         f.addStep(steps.FileUpload(workersrc="tmp/%s" % dmgName,
                            masterdest="/home/mollekopf/%s" % dmgName,
@@ -232,10 +240,18 @@ def get_builders(codebases, workerpool):
         dmgName = 'kube-kolabnow.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
             commands = [
-                util.ShellArg(command = './rebuildkube.sh', logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/sink'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', '--package', 'extragear/kube-kolabnow'], logfile='output', haltOnFailure=True),
             ],
             haltOnFailure=True,
-            workdir = craftRoot
+            workdir = craftRoot,
+            env = {
+                "MACOSX_DEPLOYMENT_TARGET": "10.9.0",
+                "SDKROOT": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/",
+                "PATH": ["/usr/local/Cellar/gettext/0.19.8.1/bin", "${PATH}"],
+                "CMAKE_LIBRARY_PATH": "/usr/local/Cellar/gettext/0.19.8.1/lib",
+                "CMAKE_INCLUDE_PATH": "/usr/local/Cellar/gettext/0.19.8.1/include"
+            }
             ))
         f.addStep(steps.FileUpload(workersrc="tmp/%s" % dmgName,
                            masterdest="/home/mollekopf/%s" % dmgName,
