@@ -227,7 +227,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellSequence(name = 'validate',
             commands = [
                 util.ShellArg(command = ['mkdir', '-p', 'tmp/mountpoint'], logfile='output', haltOnFailure=False),
-                util.ShellArg(command = ['hdiutil', 'attach', '-mountpoint', 'tmp/mountpoint', "tmp/%" % dmgName], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = ['hdiutil', 'attach', '-mountpoint', 'tmp/mountpoint', "tmp/%s" % dmgName], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = ['tmp/mountpoint/kube.app/Contents/MacOS/sinksh', 'selftest'], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = ['hdiutil', 'detach', 'tmp/mountpoint'], logfile='output', haltOnFailure=True),
             ],
@@ -266,7 +266,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellSequence(name = 'validate',
             commands = [
                 util.ShellArg(command = ['mkdir', '-p', 'tmp/mountpoint'], logfile='output', haltOnFailure=False),
-                util.ShellArg(command = ['hdiutil', 'attach', '-mountpoint', 'tmp/mountpoint', "tmp/%" % dmgName], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = ['hdiutil', 'attach', '-mountpoint', 'tmp/mountpoint', "tmp/%s" % dmgName], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = ['tmp/mountpoint/kube-kolabnow.app/Contents/MacOS/sinksh', 'selftest'], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = ['hdiutil', 'detach', 'tmp/mountpoint'], logfile='output', haltOnFailure=True),
             ],
