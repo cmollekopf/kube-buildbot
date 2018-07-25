@@ -227,7 +227,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellSequence(name = 'validate',
             commands = [
                 util.ShellArg(command = ['mkdir', '-p', 'tmp/mountpoint'], logfile='output', haltOnFailure=False),
-                util.ShellArg(command = ['hdiutil', 'attach', '-mountpoint', 'tmp/mountpoint', 'tmp/kube.dmg'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = ['hdiutil', 'attach', '-mountpoint', 'tmp/mountpoint', "tmp/%" % dmgName], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = ['tmp/mountpoint/kube.app/Contents/MacOS/sinksh', 'selftest'], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = ['hdiutil', 'detach', 'tmp/mountpoint'], logfile='output', haltOnFailure=True),
             ],
@@ -262,6 +262,16 @@ def get_builders(codebases, workerpool):
                 "CMAKE_LIBRARY_PATH": "/usr/local/Cellar/gettext/0.19.8.1/lib",
                 "CMAKE_INCLUDE_PATH": "/usr/local/Cellar/gettext/0.19.8.1/include"
             }
+            ))
+        f.addStep(steps.ShellSequence(name = 'validate',
+            commands = [
+                util.ShellArg(command = ['mkdir', '-p', 'tmp/mountpoint'], logfile='output', haltOnFailure=False),
+                util.ShellArg(command = ['hdiutil', 'attach', '-mountpoint', 'tmp/mountpoint', "tmp/%" % dmgName], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = ['tmp/mountpoint/kube-kolabnow.app/Contents/MacOS/sinksh', 'selftest'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = ['hdiutil', 'detach', 'tmp/mountpoint'], logfile='output', haltOnFailure=True),
+            ],
+            haltOnFailure = True,
+            workdir = craftRoot,
             ))
         f.addStep(steps.FileUpload(workersrc="tmp/%s" % dmgName,
                            masterdest="/home/mollekopf/%s" % dmgName,
