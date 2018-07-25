@@ -198,9 +198,9 @@ def get_builders(codebases, workerpool):
     def nightlyflatpak():
         f = util.BuildFactory()
         f.addStep(
-            steps.ShellCommand(command="{}/rebuildkolab.sh".format(flatpakdir), haltOnFailure=True)
+            steps.ShellCommand(command="{}/rebuild.sh".format(flatpakdir), haltOnFailure=True)
         )
-        f.addStep(steps.ShellCommand(command="{}/uploadkolab.sh".format(flatpakdir),
+        f.addStep(steps.ShellCommand(command="{}/upload.sh".format(flatpakdir),
             doStepIf=lambda(step): step.getProperty('upload')
         ))
         return util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=f, locks=[flatpak_lock.access('exclusive')])
@@ -221,7 +221,7 @@ def get_builders(codebases, workerpool):
                            workdir = craftRoot
                            ))
         f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
-            command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
+            command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
         return util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive')])
@@ -242,7 +242,7 @@ def get_builders(codebases, workerpool):
                            workdir = craftRoot
                            ))
         f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
-            command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
+            command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
         return util.BuilderConfig(name="kolabnowosxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive')])
@@ -262,7 +262,7 @@ def get_builders(codebases, workerpool):
                            workdir = 'C:\Users\User\CraftRoot'
                            ))
         f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
-            command = ["scp", "-B", "/home/mollekopf/kube.exe", "mollekopf@10.9.2.98:/var/www/kolab.org/kube/public_html/kube/"],
+            command = ["scp", "-B", "/home/mollekopf/kube.exe", "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
         return util.BuilderConfig(name="winbuild", workernames=["win-worker"], factory=f)
