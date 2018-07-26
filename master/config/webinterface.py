@@ -1,8 +1,15 @@
 from . import benchmarkdashboard
+from buildbot.plugins import util
 
 def getWWW():
     www = {
             'port':8010,
+            'authz': util.Authz(
+                allowRules=[
+                    util.AnyEndpointMatcher(role="admins")
+                ],
+                roleMatchers=[util.RolesFromUsername(roles=["admins"], usernames=["kube"])]
+            ),
             'plugins': {
                 'waterfall_view':{},
                 'console_view':{},
