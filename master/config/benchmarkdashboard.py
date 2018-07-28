@@ -109,7 +109,7 @@ def main():
     for benchmark in benchmarksToRun:
         # The dockercontainer is ridiculously slow, so in th meantime we'll just use the flatpak
         # hawdCommand = "{}/testenv.py srcbuild --noninteractive kube Sink hawd".format(config.dockerdir)
-        hawdCommand = "flatpak run --command=hawd com.kolabnow.kube"
+        hawdCommand = "flatpak run --command=hawd com.kubeproject.kube"
         output = subprocess.check_output(hawdCommand + " json " + benchmark["hawd_def"] + " || true", shell=True, stderr=subprocess.STDOUT)
         # log.msg("Output: ", output)
         if output:
