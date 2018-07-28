@@ -177,13 +177,10 @@ def get_builders(codebases, workerpool):
         addSinkBenchmark('tests/pipelinebenchmark')
         addSinkBenchmark('/home/developer/startimap.sh && QTEST_FUNCTION_TIMEOUT=1800000 examples/imapresource/tests/imapmailsyncbenchmark')
         # addSinkBenchmark('tests/databasepopulationandfacadequerybenchmark')
-
-        return util.BuilderConfig(name="benchmarkkube", workernames=workerpool, factory=f)
+        return f
 
     #FIXME
     flatpakdir = os.path.expanduser('~') + "/flatpak/"
-    flatpak_lock = util.MasterLock("flatpak")
-    osx_lock = util.MasterLock("osx")
 
     def kolabnowflatpak():
         f = util.BuildFactory()
@@ -193,7 +190,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellCommand(command="{}/uploadkolabnow.sh".format(flatpakdir),
             doStepIf=lambda(step): step.getProperty('upload')
         ))
-        return util.BuilderConfig(name="kolabnowflatpak", workernames=workerpool, factory=f, locks=[flatpak_lock.access('exclusive')])
+        return f
 
     def nightlyflatpak():
         f = util.BuildFactory()
@@ -203,7 +200,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellCommand(command="{}/upload.sh".format(flatpakdir),
             doStepIf=lambda(step): step.getProperty('upload')
         ))
-        return util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=f, locks=[flatpak_lock.access('exclusive')])
+        return f
 
     def osxbuild():
         f = util.BuildFactory()
@@ -242,7 +239,7 @@ def get_builders(codebases, workerpool):
             command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
-        return util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive')])
+        return f
 
     def kolabnowosxbuild():
         f = util.BuildFactory()
@@ -281,7 +278,7 @@ def get_builders(codebases, workerpool):
             command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
-        return util.BuilderConfig(name="kolabnowosxbuild", workernames=["osx-worker"], factory=f, locks=[osx_lock.access('exclusive')])
+        return f
 
     def winbuild():
         f = util.BuildFactory()
@@ -301,18 +298,22 @@ def get_builders(codebases, workerpool):
             command = ["scp", "-B", "/home/mollekopf/kube.exe", "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
-        return util.BuilderConfig(name="winbuild", workernames=["win-worker"], factory=f)
+        return f
+
+    flatpak_lock = util.MasterLock("flatpak")
+    osx_lock = util.MasterLock("osx")
+    benchmark_lock = util.WorkerLock("benchmark", maxCount=99)
 
     builders = []
     #Setup all builders
     for name, buildConfig in buildConfigurations().items():
-        builders.append(util.BuilderConfig(name=name, workernames=workerpool, factory=kubeBuildFactory(buildConfig)))
+        builders.append(util.BuilderConfig(name=name, workernames=workerpool, factory=kubeBuildFactory(buildConfig), locks=[benchmark_lock.access('counting')]))
 
-    builders.append(benchmarkkube())
-    builders.append(kolabnowflatpak())
-    builders.append(nightlyflatpak())
-    builders.append(osxbuild())
-    builders.append(kolabnowosxbuild())
-    builders.append(winbuild())
+    builders.append(util.BuilderConfig(name="benchmarkkube", workernames=workerpool, factory=benchmarkkube(), locks=[benchmark_lock.access('exclusive')]))
+    builders.append(util.BuilderConfig(name="kolabnowflatpak", workernames=workerpool, factory=kolabnowflatpak(), locks=[flatpak_lock.access('exclusive'), benchmark_lock.access('counting')]))
+    builders.append(util.BuilderConfig(name="nightlyflatpak", workernames=workerpool, factory=nightlyflatpak(), locks=[flatpak_lock.access('exclusive'), benchmark_lock.access('counting')]))
+    builders.append(util.BuilderConfig(name="osxbuild", workernames=["osx-worker"], factory=osxbuild(), locks=[osx_lock.access('exclusive'), benchmark_lock.access('counting')]))
+    builders.append(util.BuilderConfig(name="kolabnowosxbuild", workernames=["osx-worker"], factory=kolabnowosxbuild(), locks=[osx_lock.access('exclusive'), benchmark_lock.access('counting')]))
+    builders.append(util.BuilderConfig(name="winbuild", workernames=["win-worker"], factory=winbuild(), locks=[benchmark_lock.access('counting')]))
     return builders
 
