@@ -145,16 +145,17 @@ def main():
                             #We aggregate by column name
                             if name not in graph_data:
                                 graph_data[name] = []
-                            graph_data[name].append(dict(x=len(graph_data[name]), y=c['value']))
+                            graph_data[name].append(dict(x=len(graph_data[name]), y=c['value'], timestamp=row['timestamp'], commit=row['commit']))
                             units[name] = c['unit']
                             names[name] = name
 
 
             datasets=[]
             for name, data in graph_data.items():
-                datasets.append({"name": names[name],
-                    "data": data,
-                    "unit": units[name]
+                datasets.append({
+                    "name": names[name],
+                    "unit": units[name],
+                    "data": data
                     })
 
             graphName = hawdResult['name']

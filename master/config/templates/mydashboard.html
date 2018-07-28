@@ -29,9 +29,11 @@
                         datasets: [
                         {% for dataset in chart.datasets %}
                         {
-                            label: '{{dataset.name}}[{{dataset.unit}}]',
+                            label: '{{dataset.name}} [{{dataset.unit}}]',
                             borderColor: getRandomColor(),
-                            data: {{dataset.data | tojson | safe}}
+                            data: {{dataset.data | tojson | safe}},
+                            name: '{{dataset.name}}',
+                            unit: '{{dataset.unit}}'
                         },
                         {% endfor %}
                         ]
@@ -47,6 +49,28 @@
                                 position: 'bottom',
                                 beginAtZero: {{chart.absoluteAxis | tojson}}
                             }]
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                                    var label = dataset.name || '';
+
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += Math.round(tooltipItem.yLabel * 100) / 100;
+                                    label += " [" + dataset.unit + "]"
+                                    return label;
+                                },
+                                afterLabel: function(tooltipItem, data) {
+                                    var dataset = data.datasets[tooltipItem.datasetIndex];
+                                    var data = dataset.data[tooltipItem.index];
+                                    var label = 'Date: ' + data.timestamp;
+                                    label += ' Commit: ' + data.commit;
+                                    return label;
+                                }
+                            }
                         }
                     }
                 });
