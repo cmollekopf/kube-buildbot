@@ -153,18 +153,30 @@ def get_builders(codebases, workerpool):
 
 
     def benchmarkkube():
-        # FIXME
-        hawdDir="~/hawd"
         docker_options_x11 = '-t --security-opt seccomp:unconfined -v /tmp/.docker.xauth:/tmp/.docker.xauth -v /tmp/.X11-unix:/tmp/.X11-unix --device /dev/dri/card0:/dev/dri/card0 -e DISPLAY=:0 -e XAUTHORITY=/tmp/.docker.xauth'
 
         def dockerCommand(cmd, workdir, extra_args=""):
-            return "docker run --rm {extra_args} -v {hawdDir}:/home/developer/hawd -v $PWD/src:/src -v $PWD/build:/build -v $PWD/install:/install -w {workdir} kubedev bash -c '{cmd}'".format(
+            return "docker run --rm {extra_args} -v ~/hawd:/home/developer/hawd -v $PWD/src:/src -v $PWD/build:/build -v $PWD/install:/install -w {workdir} kubedev bash -c '{cmd}'".format(
                     extra_args=extra_args,
                     workdir=workdir,
-                    hawdDir=hawdDir,
                     cmd=cmd)
 
         f = kubeBuildFactory(buildConfigurations()["releasebuild"])
+
+        f.addStep(steps.ShellSequence(name = 'prepare hawd',
+            commands = [
+                util.ShellArg(
+                    command = 'mkdir -p ~/hawd',
+                    logfile='output',
+                    haltOnFailure=True),
+                util.ShellArg(
+                    command = 'echo "{\\\"results\\\": \\\"~/hawd\\\", \\\"project\\\": \\\"$PWD/src/sink/hawd_defs\\\"}" > ~/hawd.conf',
+                    logfile='output',
+                    haltOnFailure=True),
+            ],
+            workdir = './',
+            haltOnFailure=True
+            ))
 
         def addSinkBenchmark(cmd):
             f.addStep(steps.ShellCommand(name=cmd, command=dockerCommand(cmd, '/build/sink', docker_options_x11), workdir='./'))
