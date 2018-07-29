@@ -144,7 +144,7 @@ def get_builders(codebases, workerpool):
                                     {'name': 'sink', 'cmake': debug_cmake_options + ' -DENABLE_ASAN=TRUE -DENABLE_MEMCHECK=OFF'}
                         ],
                         'tests': [
-                            {'command': "{} {} /home/developer/startimap.sh && ctest -E \"modelinteractivity*\" -V".format(asan_options, lsan_options), 'workdir': '/build/sink'}
+                            {'command': "/home/developer/startimap.sh && env {} {} ctest -E \"modelinteractivity*\" -V".format(asan_options, lsan_options), 'workdir': '/build/sink'}
                         ]
             }
         }
