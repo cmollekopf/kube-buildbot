@@ -16,7 +16,7 @@ def get_schedulers(builderNames, codebases):
                                 'runtests': True,
                                 'upload': False
                             },
-                            builderNames = builderNames))
+                            builderNames = ['debugbuild', 'nightlyflatpak']))
 
     schedulerList.append(schedulers.ForceScheduler(
                             name = "force",
