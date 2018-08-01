@@ -36,25 +36,29 @@ def get_schedulers(builderNames, codebases):
                             ))
 
     # Build and run tests at 2 o'clock
-    nightlyRebuildScheduler = schedulers.Nightly(name='nightly-rebuild',
-                                        builderNames=['debugbuild', 'releasebuild', 'asanbuild'],
+    nightlyDebugRebuildScheduler = schedulers.Nightly(name='nightly-rebuild',
+                                        builderNames=['debugbuild'],
                                         codebases=codebases,
                                         properties = {
                                             'cleanbuild': True,
                                             'runtests': True
                                         },
                                         hour=2, minute=0)
-    schedulerList.append(nightlyRebuildScheduler)
+    schedulerList.append(nightlyDebugRebuildScheduler)
+    # Do a nightly asan and releasebuild if the tests pass
+    schedulerList.append(schedulers.Dependent(name='nightly-release-asan',
+                                                upstream=nightlyDebugRebuildScheduler,
+                                                builderNames=['releasebuild', 'asanbuild']))
     # Build a nightly flatpak if the tests pass
     schedulerList.append(schedulers.Dependent(name='nightly-flatpak',
-                                                upstream=nightlyRebuildScheduler,
+                                                upstream=nightlyDebugRebuildScheduler,
                                                 properties = {
                                                     'upload': True
                                                 },
                                                 builderNames=['nightlyflatpak', 'kolabnowflatpak']))
     # Build a nightly osx image if the tests pass
     schedulerList.append(schedulers.Dependent(name='nightly-osx',
-                                                upstream=nightlyRebuildScheduler,
+                                                upstream=nightlyDebugRebuildScheduler,
                                                 properties = {
                                                     'upload': True
                                                 },
