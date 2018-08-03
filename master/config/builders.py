@@ -14,7 +14,8 @@ def get_builders(codebases, workerpool):
         f = util.BuildFactory()
 
         def dockerCommand(cmd, workdir, extra_args=""):
-            return "docker run --rm {extra_args} -v $PWD/src:/src -v $PWD/build:/build -v $PWD/install:/install -w {workdir} kubedev bash -c '{cmd}'".format(
+            #Without seccomp:unconfied moc will fail with a clean-build
+            return "docker run --rm --security-opt seccomp:unconfined {extra_args} -v $PWD/src:/src -v $PWD/build:/build -v $PWD/install:/install -w {workdir} kubedev bash -c '{cmd}'".format(
                     extra_args=extra_args,
                     workdir=workdir,
                     cmd=cmd)
@@ -90,7 +91,7 @@ def get_builders(codebases, workerpool):
                 if 'timeout' in test:
                     timeout = test['timeout']
 
-                docker_options_x11 = '-t --security-opt seccomp:unconfined -v /tmp/.docker.xauth:/tmp/.docker.xauth -v /tmp/.X11-unix:/tmp/.X11-unix --device /dev/dri/card0:/dev/dri/card0 -e DISPLAY=:0 -e XAUTHORITY=/tmp/.docker.xauth'
+                docker_options_x11 = '-t -v /tmp/.docker.xauth:/tmp/.docker.xauth -v /tmp/.X11-unix:/tmp/.X11-unix --device /dev/dri/card0:/dev/dri/card0 -e DISPLAY=:0 -e XAUTHORITY=/tmp/.docker.xauth'
                 f.addStep(steps.Test(name=name,
                     command=dockerCommand(test['command'],
                         test['workdir'],
