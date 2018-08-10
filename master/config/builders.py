@@ -221,8 +221,8 @@ def get_builders(codebases, workerpool):
         dmgName = 'kube.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
             commands = [
-                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', 'extragear/sink'], logfile='output', haltOnFailure=True),
-                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--package', 'extragear/kube'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/sink'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', '--package', 'extragear/kube'], logfile='output', haltOnFailure=True),
             ],
             haltOnFailure=True,
             workdir = craftRoot,
