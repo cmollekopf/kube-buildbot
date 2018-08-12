@@ -14,6 +14,7 @@ def getWWW():
                 'waterfall_view':{},
                 'console_view':{},
                 'grid_view':{},
+                'badges':{},
                 'wsgi_dashboards': [  # This is a list of dashboards, you can create several
                     {
                         'name': 'benchmarks',  # as used in URLs
