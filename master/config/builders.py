@@ -7,6 +7,7 @@ import os
 from buildbot.config import BuilderConfig
 from buildbot.plugins import util
 from buildbot.plugins import steps
+import availabilitystep
 
 def get_builders(codebases, workerpool):
 
@@ -252,6 +253,9 @@ def get_builders(codebases, workerpool):
             command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
             doStepIf=lambda(step): step.getProperty('upload')
             ))
+        f.addStep(availabilitystep.CheckAvailability("https://files.kube-project.com/%s" % dmgName, 24,
+            doStepIf=lambda(step): step.getProperty('upload')
+            ))
         return f
 
     def kolabnowosxbuild():
@@ -289,6 +293,9 @@ def get_builders(codebases, workerpool):
                            ))
         f.addStep(steps.MasterShellCommand(name = 'Upload to mirror',
             command = ["scp", "-B", "/home/mollekopf/%s" % dmgName, "kube-project@10.4.2.23:/var/www/vhosts/kube-project.com/files.kube-project.com/"],
+            doStepIf=lambda(step): step.getProperty('upload')
+            ))
+        f.addStep(availabilitystep.CheckAvailability("https://files.kube-project.com/%s" % dmgName, 24,
             doStepIf=lambda(step): step.getProperty('upload')
             ))
         return f
