@@ -198,6 +198,10 @@ def get_builders(codebases, workerpool):
 
     def kolabnowflatpak():
         f = util.BuildFactory()
+        f.addStep(steps.MasterShellCommand(name = 'Ensure the sink repo is available',
+            command = ["git", "ls-remote", "--exit-code", "-h", "git://anongit.kde.org/sink"],
+            haltOnFailure=True
+            ))
         f.addStep(
             steps.ShellCommand(command="{}/rebuildkolabnow.sh".format(flatpakdir), haltOnFailure=True)
         )
@@ -211,6 +215,10 @@ def get_builders(codebases, workerpool):
 
     def nightlyflatpak():
         f = util.BuildFactory()
+        f.addStep(steps.MasterShellCommand(name = 'Ensure the sink repo is available',
+            command = ["git", "ls-remote", "--exit-code", "-h", "git://anongit.kde.org/sink"],
+            haltOnFailure=True
+            ))
         f.addStep(
             steps.ShellCommand(command="{}/rebuild.sh".format(flatpakdir), haltOnFailure=True)
         )
@@ -224,6 +232,10 @@ def get_builders(codebases, workerpool):
 
     def osxbuild():
         f = util.BuildFactory()
+        f.addStep(steps.MasterShellCommand(name = 'Ensure the sink repo is available',
+            command = ["git", "ls-remote", "--exit-code", "-h", "git://anongit.kde.org/sink"],
+            haltOnFailure=True
+            ))
         craftRoot = '/Users/kolab/CraftRoot'
         dmgName = 'kube.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
@@ -266,6 +278,10 @@ def get_builders(codebases, workerpool):
 
     def kolabnowosxbuild():
         f = util.BuildFactory()
+        f.addStep(steps.MasterShellCommand(name = 'Ensure the sink repo is available',
+            command = ["git", "ls-remote", "--exit-code", "-h", "git://anongit.kde.org/sink"],
+            haltOnFailure=True
+            ))
         craftRoot = '/Users/kolab/CraftRoot'
         dmgName = 'kube-kolabnow.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
@@ -308,6 +324,10 @@ def get_builders(codebases, workerpool):
 
     def winbuild():
         f = util.BuildFactory()
+        f.addStep(steps.MasterShellCommand(name = 'Ensure the sink repo is available',
+            command = ["git", "ls-remote", "--exit-code", "-h", "git://anongit.kde.org/sink"],
+            haltOnFailure=True
+            ))
         f.addStep(steps.ShellSequence(name = 'craft',
             commands = [
                 util.ShellArg(command = [r'craft\bin\craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', 'extragear/sink'], logfile='output', haltOnFailure=True),
