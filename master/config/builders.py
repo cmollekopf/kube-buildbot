@@ -208,7 +208,7 @@ def get_builders(codebases, workerpool):
         f.addStep(steps.ShellCommand(command="{}/uploadkolabnow.sh".format(flatpakdir),
             doStepIf=lambda(step): step.getProperty('upload')
         ))
-        f.addStep(availabilitystep.CheckAvailability("https://files.kube-project.com/flatpak/repo/summary", 24,
+        f.addStep(availabilitystep.CheckAvailability("https://files.kube-project.com/kolabnowflatpak/repo/summary", 24,
             doStepIf=lambda(step): step.getProperty('upload')
             ))
         return f
