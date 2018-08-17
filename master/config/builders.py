@@ -240,6 +240,9 @@ def get_builders(codebases, workerpool):
         dmgName = 'kube.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
             commands = [
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/kasync'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/kimap2'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/kdav2'], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/sink'], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', '--package', 'extragear/kube'], logfile='output', haltOnFailure=True),
             ],
@@ -286,6 +289,9 @@ def get_builders(codebases, workerpool):
         dmgName = 'kube-kolabnow.dmg'
         f.addStep(steps.ShellSequence(name = 'craft',
             commands = [
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/kasync'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/kimap2'], logfile='output', haltOnFailure=True),
+                util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/kdav2'], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', 'extragear/sink'], logfile='output', haltOnFailure=True),
                 util.ShellArg(command = [r'craft/bin/craft.py', '--install-deps', '--fetch', '--unpack', '--compile', '--install', '--qmerge', '--package', 'extragear/kube-kolabnow'], logfile='output', haltOnFailure=True),
             ],
