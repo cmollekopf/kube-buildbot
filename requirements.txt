@@ -1,5 +1,5 @@
 attrs==17.2.0
-autobahn==17.9.3
+autobahn==20.12.3
 Automat==0.6.0
 backports.ssl-match-hostname==3.5.0.1
 buildbot==0.9.11
