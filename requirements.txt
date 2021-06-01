@@ -38,7 +38,7 @@ sqlparse==0.2.3
 Tempita==0.5.2
 Twisted==17.9.0
 txaio==2.8.2
-urllib3==1.22
+urllib3==1.26.5
 websocket-client==0.44.0
 Werkzeug==0.12.2
 zope.interface==4.4.3
